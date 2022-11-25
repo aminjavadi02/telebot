@@ -1,0 +1,29 @@
+# import bcrypt
+# @bot.message_handler(commands=['adminlogin'])
+# def admin_login(message):
+#     text = message.text.replace(" ","").replace("/adminlogin","").split(',')
+#     admin_id = text[0]
+#     admin_psw = str(text[1]).encode()
+
+#     sql = ("SELECT * FROM botadmin")
+#     cursor.execute(sql)
+#     result = cursor.fetchall()
+
+#     for record in result:
+#         if(admin_id == record[1]):
+#             if bcrypt.checkpw(admin_psw,str(record[2]).encode()):
+#                 print('true')
+#                 # save user_id in database(validuser)
+#             else:
+#                 print('false psw')
+#         else:
+#             print('no such username')
+
+
+#     # user = text.split(",")
+#     # bot.reply_to(message,admin_id)
+#     # bot.reply_to(message,admin_psw)
+
+
+# i thought it'll be good to have login
+# but no. just add the user id of who u want to make admin
