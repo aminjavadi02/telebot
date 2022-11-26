@@ -12,25 +12,25 @@ TABLES = {}
 
 TABLES['admin'] = (
     "CREATE TABLE `botadmin`("
-    "`id` int(2) AUTO_INCREMENT,"
-    "`admin_id` varchar(15) NOT NULL,"
+    "`id` int(2) AUTO_INCREMENT UNIQUE,"
+    "`admin_id` varchar(15) NOT NULL UNIQUE,"
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"
 )
 
 TABLES['telgroup'] = (
     "CREATE TABLE `telgroups`("
-    "`id` int(11) AUTO_INCREMENT,"
-    "`group_name` varchar(50) NOT NULL,"
-    "`group_id` varchar(50) NOT NULL,"
+    "`id` int(11) AUTO_INCREMENT UNIQUE,"
+    "`group_name` varchar(50) NULL,"
+    "`group_id` varchar(50) NOT NULL UNIQUE,"
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"
 )
 TABLES['telchannels'] = (
     "CREATE TABLE `telchannels`("
-    "`id` int(11) AUTO_INCREMENT,"
-    "`channel_name` varchar(50) NOT NULL,"
-    "`channel_id` varchar(50) NOT NULL,"
+    "`id` int(11) AUTO_INCREMENT UNIQUE,"
+    "`channel_name` varchar(50) NULL,"
+    "`channel_id` varchar(50) NOT NULL UNIQUE,"
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"
 )

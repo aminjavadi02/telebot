@@ -1,122 +1,65 @@
-import telebot
+import group_handler
+from database import config,r,bot
+import message_handler
+import channel_handler
+import mysql.connector
 
-from database import cursor
 
 
-# bot connection
-bot = telebot.TeleBot("5913782753:AAEMbU1SELdfS6o-pIcwiCxwLdWA1omGwNk")
+@bot.message_handler(commands=['new_group'])
+def new_group(message):
+    if is_admin(message.from_user.id):
+        if(message.chat.type == 'supergroup'):
+            groupList = group_handler.get_groups()
+            if str(message.chat.id) not in groupList:
+                group_handler.add_group(message.chat.title,message.chat.id)
+                bot.reply_to(message,'done!')
+                # delete msg after 5 sec
+            else:
+                bot.reply_to(message,'already have it!')
+                # delete msg after 5 sec
+        else:
+            bot.reply_to(message,'this aint no group')
 
-@bot.message_handler(commands=['add_group'])
-def add_group(message):
-    sql = ('SELECT * FROM telgroups')
-    cursor.execute(sql)
-    groups = cursor.fetchall()
-    groupList = []
-    for group in groups:
-        groupList.append(group[2])
-    if str(message.chat.id) not in groupList:
-        print('new group')
-        print(groupList)
-        print(message.chat.id)
+
+@bot.message_handler(commands=['new_channel'])
+def new_channel(message):
+    if is_admin(message.from_user.id):
+        msg = bot.reply_to(message,"""\
+            hi. forward a message from the channel that you want to add
+            """)
+        bot.register_next_step_handler(msg,channel_handler.get_channel_id)
+
+
+@bot.channel_post_handler()
+def get_channel_posts(message):
+    if (channel_handler.channel_is_verified(message.chat.id)):
+        print('verified')
+        message_handler.check_message(message)
     else:
-        print('already added')
-        print(groupList)
-            
-            # print(message.chat.id)
-        # else:
-        #     print('match records')
-    # bot.reply_to(message,groups)
-        # add it
+        print('not verified')
+
+    # check message
+    # put in correct list in redis,sql
+    # read from redis every time and brodcast it
+    # brodcast
+
+
+def is_admin(id):
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor()
+    sql = ('SELECT * FROM botadmin')
+    cursor.execute(sql)
+    admins = cursor.fetchall()
+    adminList = [];
+    for admin in admins:
+        adminList.append(admin[1])
+    if str(id) in adminList:
+        return True
+    else:
+        return False
+
 
 
 
 bot.infinity_polling()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # only do what you have to do
-
-# r.mset({'regular_time':'5'})
-# r.mset({'fast_time':2})
-
-
-
-# @bot.message_handler(commands=['start', 'help'])
-# def send_welcome(message):
-# 	bot.reply_to(message, r.get('ali'))
-
-
-
-
-# # controller:
-# # new group
-
-# @bot.message_handler(commands=['new_group'])
-# def add_group(message):
-#     # group_id = message.chat.id
-#     # groups = r.get('groups')
-#     # if there is no groups yet
-#     if not groups :
-#         # r.lpush('groupsList',group_id)
-#     # if theres groups but dsnt inc grp_id
-#     elif not group_id in groups:
-#         # r.lpush('groupsList',group_id)
-    
-#     # print(r.get('groupsList'))
-
-# # get incoming posts and changes
-# # orginze to save in special group or delete/edit
-# # deal with database
-# # brodcast
-
-# # *********************
-
-# # model:
-# # update database actions:
-# # (lock process, save current index, do the update, resume the process from that index)
-
-# # add new group
-#     # save group id in "groups"
-#     # update the list, running in app
-
-# # add a new channel post
-
-# # edit a channel post
-
-# # delete a channel post
-
-# # **********************************
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# bot.infinity_polling()

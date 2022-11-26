@@ -1,5 +1,9 @@
 import mysql.connector
 import redis
+import telebot
+
+# bot connection
+bot = telebot.TeleBot("5913782753:AAEMbU1SELdfS6o-pIcwiCxwLdWA1omGwNk")
 
 # mysql
 config = {
