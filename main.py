@@ -29,26 +29,32 @@ def new_channel(message):
         bot.register_next_step_handler(msg,channel_handler.get_channel_id)
 
 
-@bot.channel_post_handler()
+# has caption
+@bot.channel_post_handler(content_types=['photo','voice','video','audio'])
 def get_channel_posts(message):
     if (channel_handler.channel_is_verified(message.chat.id)):
-        print('verified')
-        message_handler.check_message(message)
+        message_handler.check_message_with_caption(message)
         # الباقی رو خود چک مسج باید بده به ردیس و بعدش تابع برادکست همواره پیام ها رو از ردیس بگیره و بفرسته کاری به این نداشته باشه دیگه
-    else:
-        print('not verified')
+@bot.channel_post_handler(content_types=['text'])
+def get_channel_posts(message):
+    if (channel_handler.channel_is_verified(message.chat.id)):
+        message_handler.check_message_with_text(message)
 
     # check message
     # put in correct list in redis,sql
     # read from redis every time and brodcast it
     # brodcast
 
+@bot.edited_channel_post_handler(content_types=['text'])
+def edit_message(message):
+    if (channel_handler.channel_is_verified(message.chat.id)):
+        message_handler.check_message_with_text(message)
 
 
-
-
-
-
+@bot.edited_channel_post_handler(content_types=['photo','voice','video','audio'])
+def get_channel_posts(message):
+    if (channel_handler.channel_is_verified(message.chat.id)):
+        message_handler.check_message_with_caption(message)
 
 
 def is_admin(id):
@@ -69,3 +75,6 @@ def is_admin(id):
 
 
 bot.infinity_polling()
+
+
+# bot.forward_message(-1001897148828,message.chat.id,message.message_id)

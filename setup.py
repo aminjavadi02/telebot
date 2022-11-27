@@ -34,6 +34,24 @@ TABLES['telchannels'] = (
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"
 )
+TABLES['messages'] = (
+    "CREATE TABLE `messages`("
+    "`id` int(11) AUTO_INCREMENT UNIQUE PRIMARY KEY,"
+    "`channel_id` varchar(50) NOT NULL,"
+    "`message_id` varchar(50) NOT NULl,"
+    "`category` varchar(50) NOT NULL"
+    ") ENGINE=InnoDB"
+)
+
+
+
+
+
+
+
+
+
+
 
 def create_tables():
     cursor.execute("USE {}".format(DB_NAME))
