@@ -1,10 +1,11 @@
-from database import config,r
+from database import config
 import emoji
+from redis.commands.json.path import Path
 
 def check_message(message):
     emojiList = emoji.distinct_emoji_list(message.text)
     if emoji.emojize(":fire:") in emojiList:
-        fast_message(message)
+        set_message(message,'fast')
     elif emoji.emojize("✖️") in emojiList:
         finished_message(message)
     elif emoji.emojize(":rose:") in emojiList:
@@ -12,8 +13,8 @@ def check_message(message):
     else:
         normal_message(message)
 
-def fast_message(message):
-    print('fast')
+def set_message(message,mode):
+    print(message,mode)
 
 def finished_message(message):
     print('finished')

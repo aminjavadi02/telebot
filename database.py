@@ -1,5 +1,4 @@
 import mysql.connector
-import redis
 import telebot
 
 # bot connection
@@ -15,11 +14,3 @@ config = {
 
 db = mysql.connector.connect(**config)
 cursor = db.cursor()
-
-# cache
-r = redis.Redis(
-    host='127.0.0.1',
-    port=6379,
-    password='')
-
-# # r.mset({'ali':'mmd'}) redis db example

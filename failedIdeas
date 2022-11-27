@@ -58,3 +58,5 @@
 # thought add channel is good
 # but save channel in db urself so that noone can add channel wo ur permission
 
+
+# i thought having redis near sql is good but it was full of shit and overeng..

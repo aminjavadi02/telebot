@@ -1,10 +1,8 @@
 import group_handler
-from database import config,r,bot
+from database import config,bot
 import message_handler
 import channel_handler
 import mysql.connector
-
-
 
 @bot.message_handler(commands=['new_group'])
 def new_group(message):
@@ -36,6 +34,7 @@ def get_channel_posts(message):
     if (channel_handler.channel_is_verified(message.chat.id)):
         print('verified')
         message_handler.check_message(message)
+        # الباقی رو خود چک مسج باید بده به ردیس و بعدش تابع برادکست همواره پیام ها رو از ردیس بگیره و بفرسته کاری به این نداشته باشه دیگه
     else:
         print('not verified')
 
@@ -43,6 +42,13 @@ def get_channel_posts(message):
     # put in correct list in redis,sql
     # read from redis every time and brodcast it
     # brodcast
+
+
+
+
+
+
+
 
 
 def is_admin(id):

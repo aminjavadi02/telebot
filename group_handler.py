@@ -1,5 +1,5 @@
 import mysql.connector
-from database import config,r
+from database import config
 
 def add_group(name,id):
     db = mysql.connector.connect(**config)
