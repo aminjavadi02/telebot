@@ -11,14 +11,15 @@ def new_group(message):
             groupList = group_handler.get_groups()
             if str(message.chat.id) not in groupList:
                 group_handler.add_group(message.chat.title,message.chat.id)
-                bot.reply_to(message,'done!')
-                # delete msg after 5 sec
+                
+                msg = bot.reply_to(message,'done!')
+                message_handler.delete_message(msg,message,bot)
             else:
-                bot.reply_to(message,'already have it!')
-                # delete msg after 5 sec
+                msg = bot.reply_to(message,'already have it!')
+                message_handler.delete_message(msg,message,bot)
         else:
-            bot.reply_to(message,'this aint no group')
-
+            msg = bot.reply_to(message,'this aint no group')
+            message_handler.delete_message(msg,message,bot)
 
 @bot.message_handler(commands=['new_channel'])
 def new_channel(message):
@@ -40,11 +41,7 @@ def get_channel_posts(message):
     if (channel_handler.channel_is_verified(message.chat.id)):
         message_handler.check_message_with_text(message)
 
-    # check message
-    # put in correct list in redis,sql
-    # read from redis every time and brodcast it
-    # brodcast
-
+# is only text
 @bot.edited_channel_post_handler(content_types=['text'])
 def edit_message(message):
     if (channel_handler.channel_is_verified(message.chat.id)):
@@ -55,6 +52,14 @@ def edit_message(message):
 def get_channel_posts(message):
     if (channel_handler.channel_is_verified(message.chat.id)):
         message_handler.check_message_with_caption(message)
+
+
+@bot.message_handler(commands=['c'])
+def get_all_msgs(message):
+    msg = message_handler.get_all_messages_list()
+
+
+
 
 
 def is_admin(id):

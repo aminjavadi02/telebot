@@ -28,10 +28,8 @@ def get_channel_id(message):
             if not channel_is_verified(str(channel_id)):
                 add_channel(channel_name,channel_id)
                 bot.reply_to(message,'done!')
-                # delete msg after 5 sec
             else:
                 bot.reply_to(message,'already have it!')
-                # delete msg after 5 sec
         else:
             bot.reply_to(message,'this aint no channel')
     else:

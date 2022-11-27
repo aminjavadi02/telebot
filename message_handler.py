@@ -1,6 +1,7 @@
 import emoji
 import mysql.connector
 from database import config
+import time
 
 def check_message_with_caption(message):
     if not message.caption == None:
@@ -18,6 +19,7 @@ def check_message_with_caption(message):
         set_message(message,'normal')
 
 def check_message_with_text(message):
+    # check if message is not a command
     if not message.text == None:
         emojiList = emoji.distinct_emoji_list(message.text)
         if emoji.emojize(":fire:") in emojiList:
@@ -64,3 +66,17 @@ def message_exists(message):
     return result
 
 # make connection to dbs and put them inside the list
+
+def delete_message(reply,command,bot):
+    time.sleep(5)
+    bot.delete_message(reply.chat.id,reply.message_id)
+    bot.delete_message(command.chat.id,command.message_id)
+
+
+def get_all_messages_list():
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor()
+    sql = ('SELECT * FROM messages')
+    cursor.execute(sql)
+    sql_messages = cursor.fetchall()
+    return sql_messages

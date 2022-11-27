@@ -13,3 +13,8 @@ check if it can send message to a group where its not joined in, but id is still
 messages should be saved in redis and sql like:
 message_id,message_text etc
 so that u can find them when edited and do ur changes...
+
+# check message 
+# put in correct list in redis,sql
+# read from redis every time and brodcast it
+# brodcast
