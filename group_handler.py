@@ -18,3 +18,9 @@ def get_groups():
     for group in groups:
         groupList.append(group[2])
     return groupList
+
+def delete_group(group_id):
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor()
+    cursor.execute(('DELETE FROM telgroups WHERE group_id = {}'.format(group_id)))
+    db.commit()

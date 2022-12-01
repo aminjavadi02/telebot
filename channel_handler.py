@@ -2,16 +2,6 @@ import mysql.connector
 from database import config
 from database import bot
 
-def get_sql_channels():
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('SELECT * FROM telchannels')
-    cursor.execute(sql)
-    channels = cursor.fetchall()
-    channelList = []
-    for channel in channels:
-        channelList.append(channel[2])
-    return channelList
 
 def add_channel(name,id):
     db = mysql.connector.connect(**config)
@@ -27,30 +17,36 @@ def get_channel_id(message):
             channel_name = message.forward_from_chat.title
             if not channel_is_verified(str(channel_id)):
                 add_channel(channel_name,channel_id)
-                bot.reply_to(message,'done!')
+                bot.reply_to(message,'انجام شد')
             else:
-                bot.reply_to(message,'already have it!')
+                bot.reply_to(message,'این کانال قبلا ثبت شده است')
         else:
-            bot.reply_to(message,'this aint no channel')
+            bot.reply_to(message,'این کانال نیست')
     else:
-        bot.reply_to(message,'this aint no channel')
+        bot.reply_to(message,'این کانال نیست')
 
 def channel_is_verified(id):
     result = False
-    sql_channels = get_sql_channels()
-    if str(id) in sql_channels:
+    channels = get_channels()
+    channelList = []
+    for channel in channels:
+        channelList.append(channel[2])
+    if str(id) in channelList:
         result = True
     else:
         result = False
     return result
 
-def get_sql_channels():
+def get_channels():
     db = mysql.connector.connect(**config)
     cursor = db.cursor()
     sql = ('SELECT * FROM telchannels')
     cursor.execute(sql)
     channels = cursor.fetchall()
-    channelList = []
-    for channel in channels:
-        channelList.append(channel[2])
-    return channelList
+    return channels
+
+def delete_channel(channel_id):
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor()
+    cursor.execute(('DELETE FROM telchannels WHERE channel_id = {}'.format(channel_id)))
+    db.commit()

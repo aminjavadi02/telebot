@@ -1,20 +1,27 @@
-watch redis tutorial again and write it down
-do what u need to do to connect to project and use it
-
-redis stores in ram and is just for cache and will be deleted. changed to mysql.
-
-
-1- delete group
-1- delete message
-
-check if it can send message to a group where its not joined in, but id is still in db
+1- delete group => done
+2- delete message => done
+3- delete channel => done
+4- timings => done
+5- add channel link to send every 20 min ->failed idea
+6- deploy on vps test
 
 
-messages should be saved in redis and sql like:
-message_id,message_text etc
-so that u can find them when edited and do ur changes...
+8- استیکر ضربدر قرمز => done
 
-# check message 
-# put in correct list in redis,sql
-# read from redis every time and brodcast it
-# brodcast
+if channel is deleted, delete from database?
+
+اگه کانال پابلیک باشه ولی از ادمینی دربیاد بات بازم کار میکنه؟
+اگه پرایوت باشه چی؟
+تو کانال ادمین نباشه اصلا نمیشه عضو باشه. خودش حذف میشه
+
+
+ اگر از کانال آن-ادمین بشه بجای اینکه بگه از کانال کیک شده میگه پیام برای ارسال پیدا نشد. خار پیاما رو تک تک میگاد ولی کانال رو پاک نمیکنه
+ که مهم هم نباید باشه چون کانال ها رو فقط برای احراز ثبت بودن میخواد پیاما رو میفرسته که خودشون کانال مبدا رو دارن
+ گروه مهمه که اگه حذف بشه چی میشه
+ که فکر نکنم مشکلی داشته باشه
+
+ remove delete message of user from channel or group
+
+
+ نکته ها:
+ پیام آتش رو کلا پاک کنه ازش و ضبدر بذاره چون جاش رو تشخیص نمیده تو فارسی

@@ -44,15 +44,6 @@ TABLES['messages'] = (
 )
 
 
-
-
-
-
-
-
-
-
-
 def create_tables():
     cursor.execute("USE {}".format(DB_NAME))
     for table_name in TABLES:

@@ -8,14 +8,13 @@ def check_message_with_caption(message):
         emojiList = emoji.distinct_emoji_list(message.caption)
         if emoji.emojize(":fire:") in emojiList:
             set_message(message,'fast')
-        elif emoji.emojize("✖️") in emojiList:
+        elif emoji.emojize(":cross_mark:") in emojiList:
             finished_message(message)
         elif emoji.emojize(":rose:") in emojiList:
             finished_message(message)
         else:
             set_message(message,'normal')
     else:
-        print(message)
         set_message(message,'normal')
 
 def check_message_with_text(message):
@@ -24,16 +23,14 @@ def check_message_with_text(message):
         emojiList = emoji.distinct_emoji_list(message.text)
         if emoji.emojize(":fire:") in emojiList:
             set_message(message,'fast')
-        elif emoji.emojize("✖️") in emojiList:
+        elif emoji.emojize(":cross_mark:") in emojiList:
             finished_message(message)
         elif emoji.emojize(":rose:") in emojiList:
             finished_message(message)
         else:
             set_message(message,'normal')
     else:
-        print(message)
         set_message(message,'normal')
-
 
 def set_message(message,mode):
     db = mysql.connector.connect(**config)
@@ -44,7 +41,6 @@ def set_message(message,mode):
 
 def finished_message(message):
     if(message_exists(message)):
-        print('you')
         db = mysql.connector.connect(**config)
         cursor = db.cursor()
         sql = ('DELETE FROM messages WHERE channel_id= %s AND message_id = %s')
@@ -65,13 +61,9 @@ def message_exists(message):
         result = True
     return result
 
-# make connection to dbs and put them inside the list
-
-def delete_message(reply,command,bot):
+def delete_message(reply,bot):
     time.sleep(5)
     bot.delete_message(reply.chat.id,reply.message_id)
-    bot.delete_message(command.chat.id,command.message_id)
-
 
 def get_all_messages_list():
     db = mysql.connector.connect(**config)
@@ -80,3 +72,9 @@ def get_all_messages_list():
     cursor.execute(sql)
     sql_messages = cursor.fetchall()
     return sql_messages
+
+def delete_channel_messages(channel_id):
+    db = mysql.connector.connect(**config)
+    cursor = db.cursor()
+    cursor.execute(('DELETE FROM messages WHERE channel_id = {}'.format(channel_id)))
+    db.commit()

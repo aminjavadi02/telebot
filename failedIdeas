@@ -60,3 +60,55 @@
 
 
 # i thought having redis near sql is good but it was full of shit and overeng..
+
+
+
+
+# def broadcast_channels_link():
+#     # get channels from db
+#     channels = channel_handler.get_channels()
+#     # make link message
+#     for channel in channels:
+#         try:
+#             channel_info = bot.get_chat(channel[2])
+#             if(channel_info.username != None):
+#                 # make beauty msg with link to it
+#                 channel_link_message = message_handler.make_channel_link_message(channel_info)
+#                 # send to groups
+#                 groups = group_handler.get_groups()
+#                 for group in groups:
+#                     try:
+#                         bot.send_message(int(group),channel_link_message)
+#                     except Exception as e:
+#                         print(e)
+#                         print(groups)
+#                         print(group)
+#                         pass
+#         except Exception as e:
+#             if(e.error_code == 403 and e.description == 'Forbidden: bot is not a member of the channel chat'):
+#                 channel_handler.delete_channel(channel[2])
+#                 message_handler.delete_channel_messages(channel[2])
+#             else:
+#                 print(e)
+#             pass
+
+# def make_channel_link_message(channel_info):
+#     link = 'https://t.me/{}'.format(channel_info.username)
+#     telegram_at_sign = '@{}'.format(channel_info.username)
+#     text = '''
+#     {}
+#     لینک کانال {}
+#     {} {}
+#     {} {}
+#     {}
+#     برای مشاهده روی لینک کانال کلیک کنید
+#     '''.format(
+#         emoji.emojize(':fire:'),
+#         channel_info.title,
+#         emoji.emojize(':fire:'), link,
+#         emoji.emojize(':fire:'), telegram_at_sign,
+#         emoji.emojize(':fire: :rose:'),
+#     )
+#     return text
+
+# schedule.every(10).seconds.do(broadcast_channels_link)
