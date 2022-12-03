@@ -3,6 +3,8 @@ from database import config,bot
 import message_handler
 import channel_handler
 import mysql.connector
+import time
+import requests
 
 @bot.message_handler(commands=['new_group'])
 def new_group(message):
@@ -73,5 +75,11 @@ def is_admin(id):
         return False
 
 
-
-bot.infinity_polling()
+try:
+    bot.infinity_polling()
+except Exception as e:
+    if(isinstance(e,requests.exceptions.ConnectionError)):
+        time.sleep(60)
+        pass
+    else:
+        print(e)
