@@ -29,7 +29,6 @@ TABLES['telgroup'] = (
 TABLES['telchannels'] = (
     "CREATE TABLE `telchannels`("
     "`id` int(11) AUTO_INCREMENT UNIQUE,"
-    "`channel_name` varchar(50) NULL,"
     "`channel_id` varchar(50) NOT NULL UNIQUE,"
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"

@@ -1,5 +1,4 @@
-from database import bot
-import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
 import time
 import mysql.connector
 from database import config
@@ -8,6 +7,7 @@ import message_handler
 import group_handler
 import logging,logging.handlers
 import requests
+from pyrogram import Client
 
 logger = logging.getLogger()
 logger.addHandler(logging.handlers.SMTPHandler(
@@ -25,7 +25,12 @@ def get_messages(sql):
     messages = cursor.fetchall()
     return messages
 
-def broadcast(message_mode):
+api_id = 25456123
+api_hash = "01a09a056dc7192a585818c04fcc088e"
+client = Client("mybot",api_id, api_hash)
+
+
+def broadcast(message_mode,c:Client):
     db = mysql.connector.connect(**config)
     cursor = db.cursor()
     groupList = group_handler.get_groups()
@@ -34,7 +39,7 @@ def broadcast(message_mode):
         try:
             for message in messages:
                 for i in groupList:
-                    bot.forward_message(int(i),int(message[1]),int(message[2]))
+                    c.forward_messages(int(i),int(message[1]),int(message[2]))
         except Exception as e:
             if(isinstance(e,requests.exceptions.ConnectionError)):
                 time.sleep(60)
@@ -102,16 +107,18 @@ def broadcast(message_mode):
 sql_normal = ("SELECT * FROM messages WHERE category = 'normal'")
 sql_fast = sql = ("SELECT * FROM messages WHERE category = 'fast'")
 
-# schedule.every(3).minutes.do(broadcast,sql_fast)
-# schedule.every(7).minutes.do(broadcast,sql_normal)
 
-schedule.every(5).seconds.do(broadcast,sql_fast)
-schedule.every(10).seconds.do(broadcast,sql_normal)
+scheduler = BackgroundScheduler()
+scheduler.add_job(broadcast, "interval", [sql_normal,client] , seconds=6)
+scheduler.add_job(broadcast, "interval", [sql_fast,client] , seconds=3)
+
+
+
+
 
 try:
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    scheduler.start()
+    client.run()
 except Exception as e:
     print(e)
     pass
