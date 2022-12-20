@@ -21,7 +21,6 @@ TABLES['admin'] = (
 TABLES['telgroup'] = (
     "CREATE TABLE `telgroups`("
     "`id` int(11) AUTO_INCREMENT UNIQUE,"
-    "`group_name` varchar(50) NULL,"
     "`group_id` varchar(50) NOT NULL UNIQUE,"
     "PRIMARY KEY (`id`)"
     ") ENGINE=InnoDB"

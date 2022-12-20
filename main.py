@@ -1,11 +1,11 @@
 import group_handler
-from database import config,bot
+from database import bot
 import message_handler
 import channel_handler
-import mysql.connector
 import time
 import requests
 import emoji
+from admin import is_admin
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -84,56 +84,6 @@ def start(message):
         bot.reply_to(message,welcome_msg)
 
 
-@bot.message_handler(commands=['test_cm'])
-def test_cm(message):
-    # bot.reply_to(message,message)
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('SELECT * FROM botadmin')
-    cursor.execute(sql)
-    admins = cursor.fetchall()
-    adminList = [];
-    for admin in admins:
-        adminList.append(admin[1])
-    for i in adminList:
-        print(type(i))
-
-@bot.message_handler(commands=['new_group'])
-def new_group(message):
-    if is_admin(message.from_user.id):
-        if(message.chat.type == 'group' or message.chat.type == 'supergroup'):
-            groupList = group_handler.get_groups()
-            if str(message.chat.id) not in groupList:
-                group_handler.add_group(message.chat.title,message.chat.id)
-                
-                msg = bot.reply_to(message,'انجام شد')
-                message_handler.delete_message(msg,bot)
-            else:
-                msg = bot.reply_to(message,'این گروه قبلا ثبت شده است')
-                message_handler.delete_message(msg,bot)
-        else:
-            msg = bot.reply_to(message,'اینجا گروه نیست')
-            message_handler.delete_message(msg,bot)
-
-
-@bot.message_handler(commands=['del_group'])
-def del_group(message):
-    if is_admin(message.from_user.id):
-        if(message.chat.type == 'group' or message.chat.type == 'supergroup'):
-            groupList = group_handler.get_groups()
-            if str(message.chat.id) in groupList:
-                group_handler.delete_group(message.chat.id)
-                
-                msg = bot.reply_to(message,'انجام شد')
-                message_handler.delete_message(msg,bot)
-            else:
-                msg = bot.reply_to(message,'این گروه در دیتابیس وجود ندارد')
-                message_handler.delete_message(msg,bot)
-        else:
-            msg = bot.reply_to(message,'اینجا گروه نیست')
-            message_handler.delete_message(msg,bot)
-
-
 # check if inside the bot
 @bot.message_handler(commands=['new_channel'])
 def new_channel(message):
@@ -180,19 +130,6 @@ def get_channel_posts(message):
         message_handler.check_message_with_caption(message)
 
 
-def is_admin(id):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('SELECT * FROM botadmin')
-    cursor.execute(sql)
-    admins = cursor.fetchall()
-    adminList = [];
-    for admin in admins:
-        adminList.append(admin[1])
-    if str(id) in adminList:
-        return True
-    else:
-        return False
 
 
 try:

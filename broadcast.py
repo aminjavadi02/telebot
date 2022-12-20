@@ -8,6 +8,8 @@ import group_handler
 import logging,logging.handlers
 import requests
 from pyrogram import Client
+from pyrogram.types import Message
+from admin import is_admin
 
 logger = logging.getLogger()
 logger.addHandler(logging.handlers.SMTPHandler(
@@ -28,6 +30,46 @@ def get_messages(sql):
 api_id = 25456123
 api_hash = "01a09a056dc7192a585818c04fcc088e"
 client = Client("mybot",api_id, api_hash)
+
+
+@client.on_message(group=1)
+def group_add(c:Client,m:Message):
+    text = m.text
+    if(hasattr(m,'from_user') and hasattr(m.from_user,'id')):
+        if is_admin(m.from_user.id):
+            if(text == "!addgroup"):
+                if(m.chat.type.value == 'group' or m.chat.type.value == 'supergroup'):
+                    groupList = group_handler.get_groups()
+                    if str(m.chat.id) not in groupList:
+                        group_handler.add_group(m.chat.id)
+                        m.edit('انجام شد')
+                        m.delete()
+                    else:
+                        m.edit('این گروه قبلا ثبت شده است')
+                        m.delete()
+                else:
+                    m.edit('اینجا گروه نیست')
+                    m.delete()
+
+@client.on_message(group=0)
+def del_group(c:Client,m:Message):
+    text = m.text
+    if(hasattr(m,'from_user') and hasattr(m.from_user,'id')):
+        if is_admin(m.from_user.id):
+            if(text == "!delgroup"):
+                if(m.chat.type.value == 'group' or m.chat.type.value == 'supergroup'):
+                    groupList = group_handler.get_groups()
+                    if str(m.chat.id) in groupList:
+                        group_handler.delete_group(m.chat.id)
+                        m.edit('انجام شد')
+                        m.delete()
+                    else:
+                        m.edit('این گروه در دیتابیس وجود ندارد')
+                        m.delete()
+                else:
+                    m.edit('اینجا گروه نیست')
+                    m.delete()
+
 
 
 def broadcast(message_mode,c:Client):
@@ -109,8 +151,8 @@ sql_fast = sql = ("SELECT * FROM messages WHERE category = 'fast'")
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(broadcast, "interval", [sql_normal,client] , seconds=6)
-scheduler.add_job(broadcast, "interval", [sql_fast,client] , seconds=3)
+scheduler.add_job(broadcast, "interval", [sql_normal,client] , seconds=20)
+scheduler.add_job(broadcast, "interval", [sql_fast,client] , seconds=15)
 
 
 
