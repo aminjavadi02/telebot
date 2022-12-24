@@ -1,6 +1,7 @@
 import mysql.connector
 from database import config
 from database import bot
+import message_handler
 
 
 def add_channel(id):
@@ -49,6 +50,7 @@ def delete_channel(channel_id):
     cursor = db.cursor()
     cursor.execute(('DELETE FROM telchannels WHERE channel_id = {}'.format(channel_id)))
     db.commit()
+    message_handler.delete_channel_messages(channel_id)
 
 
 def del_channle_handler(message):

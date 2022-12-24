@@ -1,11 +1,19 @@
-import group_handler
 from database import bot
 import message_handler
 import channel_handler
-import time
-import requests
 import emoji
 from admin import is_admin
+import logging
+import telebot
+
+logger = telebot.logger
+logger.setLevel(logging.WARNING)
+formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+file_handler = logging.FileHandler('main.log')
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+# logging.basicConfig(level=logging.ERROR,filename='main.log',format="%(levelname)s:%(message)s")
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -33,7 +41,7 @@ def start(message):
 
         {} اضافه کردن گروه
 
-        {} /new_group
+        {} !new_group
 
         نکته:
         این دستور رو داخل گروهی که ربات توش عضوه بزن
@@ -41,7 +49,7 @@ def start(message):
 
         {} حذف گروه
 
-        {} /del_group
+        {} !del_group
 
         نکته:
         این دستور رو داخل گروهی که ربات توش عضوه بزن
@@ -133,10 +141,7 @@ def get_channel_posts(message):
 
 
 try:
-    bot.infinity_polling()
+    bot.infinity_polling(logger_level=logging.WARNING)
 except Exception as e:
-    if(isinstance(e,requests.exceptions.ConnectionError)):
-        time.sleep(60)
-        pass
-    else:
-        print(e)
+    logger.debug(e)
+    pass

@@ -25,3 +25,12 @@ if channel is deleted, delete from database?
 
  نکته ها:
  پیام آتش رو کلا پاک کنه ازش و ضبدر بذاره چون جاش رو تشخیص نمیده تو فارسی
+
+
+
+logger2 = logging.getLogger(__name__)
+logger2.setLevel(logging.WARNING)
+formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+file_handler = logging.FileHandler('main.log')
+file_handler.setFormatter(formatter)
+logger2.addHandler(file_handler)
