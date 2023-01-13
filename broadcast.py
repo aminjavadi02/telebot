@@ -1,14 +1,12 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import time
-import mysql.connector
-from database import config
+from database import Messages, db
 import group_handler
 from pyrogram import Client
 from pyrogram.types import Message
 from admin import is_admin
 from pyrogram.errors import SeeOther,Unauthorized,BadRequest,FloodWait,Forbidden,NotAcceptable,InternalServerError,RPCError
 import logging
-
 
 
 logger = logging.getLogger(__name__)
@@ -18,13 +16,12 @@ file_handler = logging.FileHandler('broadcast.log')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-
-def get_messages(sql):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    cursor.execute(sql)
-    messages = cursor.fetchall()
-    return messages
+def get_messages(category):
+    messages = Messages.select().where(Messages.category == category).namedtuples()
+    message_list = []
+    for message in messages:
+        message_list.append(message)
+    return message_list
 
 api_id = 25456123
 api_hash = "01a09a056dc7192a585818c04fcc088e"
@@ -34,6 +31,8 @@ client = Client("mybot",api_id, api_hash)
 
 @client.on_message(group=1)
 def group_add(c:Client,m:Message):
+    if db.is_closed():
+        db.connect()
     text = m.text
     if(hasattr(m,'from_user') and hasattr(m.from_user,'id')):
         if is_admin(m.from_user.id):
@@ -50,9 +49,13 @@ def group_add(c:Client,m:Message):
                 else:
                     m.edit('اینجا گروه نیست')
                     m.delete()
+    if not db.is_closed():
+        db.close()
 
 @client.on_message(group=0)
 def del_group(c:Client,m:Message):
+    if db.is_closed():
+        db.connect()
     text = m.text
     if(hasattr(m,'from_user') and hasattr(m.from_user,'id')):
         if is_admin(m.from_user.id):
@@ -69,19 +72,21 @@ def del_group(c:Client,m:Message):
                 else:
                     m.edit('اینجا گروه نیست')
                     m.delete()
+    if not db.is_closed():
+        db.close()
 
-async def broadcast(message_mode,c:Client):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
+async def broadcast(message_category,c:Client):
+    if db.is_closed():
+        db.connect()
+    messages = Messages.select().where(Messages.category == message_category).namedtuples()
     groupList = group_handler.get_groups()
-    messages = get_messages(message_mode)
     if(len(groupList) > 0 and len(messages) > 0 ):
         try:
-            await c.start()
             for message in messages:
-                for i in groupList:
-                    await c.forward_messages(int(i),int(message[1]),int(message[2]))
-            await c.stop()
+                time.sleep(0.1)
+                for group_id in groupList:
+                    time.sleep(0.1)
+                    await c.forward_messages(int(group_id), int(message.channel_id), int(message.message_id))
         except SeeOther as seeother:
             logger.error(seeother)
             pass
@@ -100,22 +105,17 @@ async def broadcast(message_mode,c:Client):
 
         except BadRequest as badRequest:
             if(badRequest.ID == "MESSAGE_ID_INVALID"):
-                sql = ('DELETE FROM messages WHERE id = {}'.format(message[0]))
-                cursor.execute(sql)
-                db.commit()
-                if(message in messages):
-                    messages.remove(message)
+                Messages.delete().where(Messages.message_id == message.message_id).execute()
                 pass
             elif(badRequest.ID == "PEER_ID_INVALID"):
-                group_handler.delete_group(i)
-                if(i in groupList):
-                    groupList.remove(i)
+                group_handler.delete_group(group_id)
+                if(group_id in groupList):
+                    groupList.remove(group_id)
                 pass
         except FloodWait as floodWait:
             time.sleep(floodWait.value)
             logger.error(floodWait)
             pass
-
         except Forbidden as forbidden:
             logger.error(forbidden)
             pass
@@ -137,14 +137,13 @@ async def broadcast(message_mode,c:Client):
         except Exception as err:
             logger.error(err)
             pass
+    if not db.is_closed():
+        db.close()
 
-sql_normal = ("SELECT * FROM messages WHERE category = 'normal'")
-sql_fast = sql = ("SELECT * FROM messages WHERE category = 'fast'")
-
-
-scheduler = AsyncIOScheduler()
-scheduler.add_job(broadcast, "interval", [sql_normal,client] , seconds=10)
-scheduler.add_job(broadcast, "interval", [sql_fast,client] , seconds=5)
+# scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(job_defaults={'max_instances': 10})
+scheduler.add_job(broadcast, "interval", ["normal", client] , seconds=20)
+scheduler.add_job(broadcast, "interval", ["fast", client] , seconds=30)
 
 
 

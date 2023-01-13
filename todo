@@ -1,36 +1,4 @@
-1- delete group => done
-2- delete message => done
-3- delete channel => done
-4- timings => done
-5- add channel link to send every 20 min ->failed idea
-6- deploy on vps test
-
-
-8- استیکر ضربدر قرمز => done
-
-if channel is deleted, delete from database?
-
-اگه کانال پابلیک باشه ولی از ادمینی دربیاد بات بازم کار میکنه؟
-اگه پرایوت باشه چی؟
-تو کانال ادمین نباشه اصلا نمیشه عضو باشه. خودش حذف میشه
-
-
- اگر از کانال آن-ادمین بشه بجای اینکه بگه از کانال کیک شده میگه پیام برای ارسال پیدا نشد. خار پیاما رو تک تک میگاد ولی کانال رو پاک نمیکنه
- که مهم هم نباید باشه چون کانال ها رو فقط برای احراز ثبت بودن میخواد پیاما رو میفرسته که خودشون کانال مبدا رو دارن
- گروه مهمه که اگه حذف بشه چی میشه
- که فکر نکنم مشکلی داشته باشه
-
- remove delete message of user from channel or group
-
-
- نکته ها:
- پیام آتش رو کلا پاک کنه ازش و ضبدر بذاره چون جاش رو تشخیص نمیده تو فارسی
-
-
-
-logger2 = logging.getLogger(__name__)
-logger2.setLevel(logging.WARNING)
-formatter = logging.Formatter("%(asctime)s:%(levelname)s:%(name)s:%(message)s")
-file_handler = logging.FileHandler('main.log')
-file_handler.setFormatter(formatter)
-logger2.addHandler(file_handler)
+1- admin
+2- broadcast2
+3- removed some files
+4- you can not import bot to bc

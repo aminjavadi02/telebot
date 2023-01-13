@@ -1,15 +1,12 @@
-import mysql.connector
-from database import config
-from database import bot
+from database import Tel_channel
+from bot import bot
 import message_handler
 
 
 def add_channel(id):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('INSERT INTO telchannels (channel_id) VALUES (%s)')
-    cursor.execute(sql,(id,))
-    db.commit()
+    Tel_channel.create(
+        channel_id = id
+    )
 
 def get_channel_id(message):
     if not message.forward_from_chat == None:
@@ -28,28 +25,21 @@ def get_channel_id(message):
 def channel_is_verified(id):
     result = False
     channels = get_channels()
-    channelList = []
-    for channel in channels:
-        channelList.append(channel[1])
-    if str(id) in channelList:
+    if str(id) in channels:
         result = True
     else:
         result = False
     return result
 
 def get_channels():
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('SELECT * FROM telchannels')
-    cursor.execute(sql)
-    channels = cursor.fetchall()
+    query = Tel_channel.select(Tel_channel.channel_id).namedtuples()
+    channels = []
+    for channel in query:
+        channels.append(channel.channel_id)
     return channels
 
 def delete_channel(channel_id):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    cursor.execute(('DELETE FROM telchannels WHERE channel_id = {}'.format(channel_id)))
-    db.commit()
+    Tel_channel.delete().where(Tel_channel.channel_id == channel_id).execute()
     message_handler.delete_channel_messages(channel_id)
 
 

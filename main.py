@@ -1,4 +1,4 @@
-from database import bot
+from bot import bot
 import message_handler
 import channel_handler
 import emoji
@@ -13,7 +13,7 @@ file_handler = logging.FileHandler('main.log')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-# logging.basicConfig(level=logging.ERROR,filename='main.log',format="%(levelname)s:%(message)s")
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -140,8 +140,9 @@ def get_channel_posts(message):
 
 
 
+
 try:
-    bot.infinity_polling(logger_level=logging.WARNING)
+    bot.infinity_polling(logger_level=None)
 except Exception as e:
     logger.debug(e)
     pass

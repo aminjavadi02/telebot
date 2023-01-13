@@ -1,26 +1,16 @@
-import mysql.connector
-from database import config
+from database import Tel_group
 
 def add_group(id):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('INSERT INTO telgroups (group_id) VALUES (%s)')
-    cursor.execute(sql,(id,))
-    db.commit()
+    Tel_group.create(
+        group_id = id
+    )
 
 def get_groups():
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    sql = ('SELECT * FROM telgroups')
-    cursor.execute(sql)
-    groups = cursor.fetchall()
+    query = Tel_group.select().namedtuples()
     groupList = []
-    for group in groups:
-        groupList.append(group[1])
+    for group in query:
+        groupList.append(group.group_id)
     return groupList
 
 def delete_group(group_id):
-    db = mysql.connector.connect(**config)
-    cursor = db.cursor()
-    cursor.execute(('DELETE FROM telgroups WHERE group_id = {}'.format(group_id)))
-    db.commit()
+    Tel_group.delete().where(Tel_group.group_id == group_id).execute()
